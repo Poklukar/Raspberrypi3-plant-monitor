@@ -208,6 +208,18 @@ def load_config():
 def change_day_count(condition, addage):
     global temp_day, hum_day, soil_day, rainYesterday, temp_day_updated, hum_day_updated, soil_day_updated, needPhoto
     # Counts days of measurements being too high, if it gets to threshold it takes a photo
+        if addage < 0:
+            temp_day = 0
+        else:
+            temp_day += addage
+            if temp_day >= 2:
+                temp_day = 2
+                #SOMETHING WRONG TAKE A PHOTO
+                needPhoto = True
+        hum_day_updated = True
+    
+    
+    
     if "air_humidity" in condition and not temp_day_updated:
         temp_day += addage
         temp_day_updated = True
@@ -219,29 +231,28 @@ def change_day_count(condition, addage):
             needPhoto = True
             
     elif "air_temperature" in condition and not hum_day_updated:
-        hum_day += addage
-        hum_day_updated = True
-        if hum_day < 0:
+        if addage < 0:
             hum_day = 0
-        elif hum_day >= 5:
-            hum_day = 5
-            #SOMETHING WRONG TAKE A PHOTO
-            needPhoto = True
+        else:
+            hum_day += addage
+            if hum_day >= 5:
+                hum_day = 5
+                #SOMETHING WRONG TAKE A PHOTO
+                needPhoto = True
+        hum_day_updated = True
+        
             
     elif "soil_humidity" in condition and not soil_day_updated:
-        soil_day += addage
-        soil_day_updated = True
-        if addage > 0:
-            rainYesterday = True
-        if soil_day < 0:
+        if addage < 0:
             soil_day = 0
-        elif soil_day >= 3:
-            soil_day = 3
-            #SOMETHING WRONG TAKE A PHOTO
-            needPhoto = True
+        else:
+            soil_day += addage
+            rainYesterday = True
+            if soil_day >= 3:
+                soil_day = 3
+                #SOMETHING WRONG TAKE A PHOTO
+                needPhoto = True
 
-def plant_unstable_conditions():
-    take_photo()
     
 
 def check_conditions(temperature, humidity, soil_moisture):
